@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@babel/preset-react": "^7.12.13",
+    "@bcgov/bc-sans": "^1.0.1",
     "@bcgov/bootstrap-theme": "https://github.com/bcgov/bootstrap-theme/releases/download/v1.1.1/bcgov-bootstrap-theme-1.1.1.tgz",
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.22",
