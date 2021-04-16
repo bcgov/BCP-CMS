@@ -13,7 +13,7 @@ services:
     networks:
       - bcp-cms-network
 
-  react-frontend:
+  proxy:
     container_name: bcp-frontend
     restart: unless-stopped
     build:
@@ -28,6 +28,26 @@ services:
       REACT_APP_KEYCLOAK_CLIENT_ID: ${REACT_APP_KEYCLOAK_CLIENT_ID}
     ports:
       - "8080:8080"
+    # tty: true
+    networks:
+      - bcp-cms-network
+    
+
+  react-frontend:
+    container_name: bcp-frontend
+    restart: unless-stopped
+    build:
+      context: src/frontend
+      dockerfile: Dockerfile
+    environment:
+      REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+      REACT_APP_CMS_BASE_URL: ${REACT_APP_CMS_BASE_URL}
+      REACT_APP_FRONTEND_BASE_URL: ${REACT_APP_FRONTEND_BASE_URL}
+      REACT_APP_KEYCLOAK_AUTH_URL: ${REACT_APP_KEYCLOAK_AUTH_URL}
+      REACT_APP_KEYCLOAK_REALM: ${REACT_APP_KEYCLOAK_REALM}
+      REACT_APP_KEYCLOAK_CLIENT_ID: ${REACT_APP_KEYCLOAK_CLIENT_ID}
+    ports:
+      - "4000:4000"
     # tty: true
     networks:
       - bcp-cms-network
