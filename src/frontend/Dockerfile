@@ -1,5 +1,6 @@
 # pull official base image
-FROM registry.access.redhat.com/ubi7/nodejs-14 AS build-deps
+FROM node:14.16.0-alpine
+
 ARG REACT_APP_API_BASE_URL
 ARG REACT_APP_CMS_BASE_URL
 ARG REACT_APP_FRONTEND_BASE_URL
@@ -16,46 +17,32 @@ ENV REACT_APP_KEYCLOAK_AUTH_URL=${REACT_APP_KEYCLOAK_AUTH_URL}
 ENV REACT_APP_KEYCLOAK_REALM=${REACT_APP_KEYCLOAK_REALM}
 ENV REACT_APP_KEYCLOAK_CLIENT_ID=${REACT_APP_KEYCLOAK_CLIENT_ID}
 
-
 # set working directory
 WORKDIR /frontend
 
 # add `/node_modules/.bin` to $PATH
 ENV PATH ./node_modules/.bin:$PATH
-USER 0
-RUN yum install -y \
+
+RUN apk add --update \
     python \
     python-dev \
-    python-pip \
+    py-pip \
     build-base \
-    bash \ 
     git \
-    openssh-client
-# RUN pip3 install virtualenv
+    openssh-client \
+    && pip install virtualenv \
+    && rm -rf /var/cache/apk/*
 
 # install app dependencies
-# COPY package.json ./
-COPY . .
-RUN npm install && \
-    npm install -g @angular/cli react-scripts@3.4.1
+COPY package.json ./
+RUN npm install --silent
+RUN npm install react-scripts@3.4.1 -g
 
-# RUN ng build --prod
+# add bash to the image
+RUN apk add --no-cache bash
+
 # add app
-
-RUN mkdir -p /frontend/node_modules/.cache && \
-    chmod 777 /frontend/node_modules/.cache
-########################################
-### Stage 2 - Production environment ###
-########################################
 COPY . ./
-RUN npm run build --prod
 
-FROM registry.access.redhat.com/ubi8/nginx-118 AS runtime
-USER 0
-RUN mkdir -p /var/cache/nginx/client_temp &&\
-    chmod -R 777 /var/cache/nginx/client_temp
-COPY --from=build-deps /frontend/build /opt/app-root/src
-# COPY ./frontend /opt/app-root/src/app
-COPY ./nginx.conf /etc/nginx/nginx.conf
-EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+# start app
+CMD ["npm", "start"]

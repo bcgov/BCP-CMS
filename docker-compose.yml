@@ -4,7 +4,7 @@ services:
   bcparks-api:
     container_name: bcparks-api
     build:
-      context: ./src/api/BCParksApi
+      context: src/api/BCParksApi
     environment:
       ASPNETCORE_ENVIRONMENT: Development
     ports:
@@ -27,11 +27,11 @@ services:
       REACT_APP_KEYCLOAK_AUTH_URL: ${REACT_APP_KEYCLOAK_AUTH_URL}
       REACT_APP_KEYCLOAK_REALM: ${REACT_APP_KEYCLOAK_REALM}
       REACT_APP_KEYCLOAK_CLIENT_ID: ${REACT_APP_KEYCLOAK_CLIENT_ID}
-    ports:
-      - "8080:8080"
-    tty: true
     networks:
       - bcp-cms-network
+    ports:
+      - "3000:3000"
+    tty: true
 
   strapi:
     image: strapi/strapi:3.5.3
@@ -74,38 +74,9 @@ services:
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
 
-  staging:
-    container_name: bcp-staging
-    restart: unless-stopped
-    build:
-      context: src/web
-      dockerfile: Dockerfile
-    # volumes:
-    #   - "./web:/opt/app-root/src/app"
-    #   - "./web/node_modules:/opt/app-root/src/app/node_modules"
-    #   - website:/app/site
-    ports:
-      - "8000:8000"
-    networks:
-      - bcp-cms-network
-
-  # public:
-  #   container_name: bcp-public
-  #   restart: unless-stopped
-  #   build:
-  #     context: src/web
-  #     dockerfile: Dockerfile-public
-  #   networks:
-  #     - bcp-cms-network
-  #   volumes:
-  #     - website:/usr/local/nginx/html
-  #   ports:
-  #     - "80:80"
-
 networks:
   bcp-cms-network:
     driver: bridge
 
 volumes:
   local_postgres_data:
-  website:

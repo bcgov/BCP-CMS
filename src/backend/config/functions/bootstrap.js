@@ -224,11 +224,14 @@ const loadEventType = async () => {
 
 const createApiUser = async () => {
   const authRole = await findRole("authenticated");
+  const password = await strapi.admin.services.auth.hashPassword(
+    process.env.API_USER_PASSWORD
+  );
   const apiUser = await Promise.resolve(
     strapi.query("user", "users-permissions").create({
       username: process.env.API_USER_NAME,
       email: process.env.API_USER_EMAIL,
-      password: process.env.API_USER_PASSWORD,
+      password: password,
       provider: "local",
       confirmed: true,
       blocked: false,
@@ -420,12 +423,58 @@ const loadData = async () => {
   }
 };
 
+const createAdmin = async () => {
+  const params = {
+    username: process.env.DEV_USER || "admin",
+    password: process.env.DEV_PASS || "admin",
+    firstname: process.env.DEV_USER || "Admin",
+    lastname: process.env.DEV_USER || "Admin",
+    email: process.env.DEV_EMAIL || "admin@test.test",
+    blocked: false,
+    isActive: true,
+  };
+  //Check if any account exists.
+  const admins = await strapi.query("user", "admin").find();
+
+  if (admins.length === 0) {
+    try {
+      let tempPass = params.password;
+      let verifyRole = await strapi
+        .query("role", "admin")
+        .findOne({ code: "strapi-super-admin" });
+      if (!verifyRole) {
+        verifyRole = await strapi.query("role", "admin").create({
+          name: "Super Admin",
+          code: "strapi-super-admin",
+          description:
+            "Super Admins can access and manage all features and settings.",
+        });
+      }
+      params.roles = [verifyRole.id];
+      params.password = await strapi.admin.services.auth.hashPassword(
+        params.password
+      );
+      await strapi.query("user", "admin").create({
+        ...params,
+      });
+      strapi.log.info("Admin account was successfully created.");
+      strapi.log.info(`Email: ${params.email}`);
+      strapi.log.info(`Password: ${tempPass}`);
+    } catch (error) {
+      strapi.log.error(
+        `Couldn't create Admin account during bootstrap: `,
+        error
+      );
+    }
+  }
+};
+
 module.exports = async () => {
   // Load data and set default public roles on first run
   const shouldSetDefaultPermissions = await isFirstRun();
-  if (shouldSetDefaultPermissions) {
-    await setDefaultPermissions();
-    await loadData();
-  }
-  await loadPublicAdvisory();
+  //if (shouldSetDefaultPermissions) {
+  await createAdmin();
+  await setDefaultPermissions();
+  await loadData();
+  //}
 };
