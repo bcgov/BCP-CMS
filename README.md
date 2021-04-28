@@ -80,7 +80,7 @@ The application includes:
 * Leaflet 
 * NGINX
 
-#### Backend
+#### Backend/CMS
 
 * Headless API - Strapi
 
