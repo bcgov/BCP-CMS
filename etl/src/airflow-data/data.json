@@ -1,0 +1,6 @@
+{
+    "base_url_data": {
+        "par": "https://api.par_bcparks.ca",
+        "bcgw": "https://api.bcgw_bcparks.ca"
+    }
+}
