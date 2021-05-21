@@ -65,10 +65,28 @@ def _dump_data(task_instance):
 ### Transform
 def transform_par_to_proct_land(pro_land):
     json = {
-        "id": pro_land["orcNumber"]
+        "orcs": pro_land["orcNumber"],
+        "protectedAreaName": pro_land["protectedLandName"],
+        "totalArea": pro_land["totalArea"],
+        "uplandArea": pro_land["uplandArea"],
+        "marineArea": pro_land["marineArea"],
+        "marineProtectedArea": pro_land["marineProtectedAreaInd"],
+        "type": pro_land["protectedLandTypeDescription"],
+        "typeCode": pro_land["protectedLandTypeCode"],
+        "class": pro_land["protectedLandClassCode"],
+        "status": pro_land["protectedLandStatusCode"],
+        "establishedDate": pro_land["establishedDate"],
+        "repealedDate": None,
+        "url": "",
+        "latitude": None,
+        "longitude": None,
+        "mapZoom": None,
+        "sites": pro_land["sites"],
+        "managementAreas": pro_land["managementAreas"]
     }
 
     return json
+
 
 
 ### misc

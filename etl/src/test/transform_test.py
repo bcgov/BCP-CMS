@@ -42,7 +42,33 @@ def test_transform_par():
     result = transform_par_to_proct_land(data)
 
     control = {
-        'id': 481
+        "orcs": 481,
+        "protectedAreaName": "Brim River Hot Springs Protected Area",
+        "totalArea": 202,
+        "uplandArea": 191,
+        "marineArea": 11,
+        "marineProtectedArea": "Y",
+        "type": "Protected Area",
+        "typeCode": "PA",
+        "class": "N",
+        "status": "A",
+        "establishedDate": "2005-03-22",
+        "repealedDate": None,
+        "url": "",
+        "latitude": None,
+        "longitude": None,
+        "mapZoom": None,
+        "sites": [],
+        "managementAreas": [
+            {
+                "protectedLandManagementAreaNumber": "16",
+                "protectedLandManagementAreaName": "Lakelse Douglas Channel",
+                "protectedLandSectionNumber": "13",
+                "protectedLandRegionName": "North Coast Skeena",
+                "protectedLandRegionNumber": "7",
+                "protectedLandSectionName": "Skeena West"
+            }
+        ],
     }
 
     assert result == control
