@@ -5,6 +5,7 @@ import requests
 
 
 # variables
+# TODO: remove. use airflow variable
 par_api_url_base = 'https://a100.gov.bc.ca/pub/parws'
 #base_url = Variable.get("base_url_data", deserialize_json=True)
 #par_api_url_base = base_url["par"]
@@ -14,7 +15,7 @@ headers = {
     'Content-Type': 'application/json'
 }
 
-
+### task pythons
 def _get_data_from_par(task_instance):
     api_url = f"{par_api_url_base}/protectedLands?protectedLandName=%25&protectedLandTypeCodes=CS,ER,PA,PK,RA"
     
@@ -26,6 +27,7 @@ def _get_data_from_par(task_instance):
             data = response.json()
 
             if 'data' in data:
+                # TODO: remove
                 for d in data["data"]:
                     print(d)
 
@@ -50,9 +52,7 @@ def _transform_data(task_instance):
     json = []
 
     for pro_land in data:
-        json.append({
-            "id": pro_land["orcNumber"]
-        })
+        json.append(transform_par_to_proct_land(pro_land))
 
     return json
 
@@ -61,6 +61,24 @@ def _dump_data(task_instance):
     data = task_instance.xcom_pull(task_ids='_transform_data')
     
     return None
+
+### Transform
+def transform_par_to_proct_land(pro_land):
+    json = {
+        "id": pro_land["orcNumber"]
+    }
+
+    return json
+
+
+### misc
+def clean_data():
+    pass
+
+def validate_data():
+    pass
+
+
 
 if __name__ == "__main__":
     _get_data_from_par(None)
